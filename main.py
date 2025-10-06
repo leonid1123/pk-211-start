@@ -1,10 +1,12 @@
 #список покупок с БД
 #шаблон https://www.pythontutorial.net
+#https://github.com/leonid1123/pk-211-start
 import sys
 from pathlib import Path
 import sqlite3
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QApplication, QWidget, QGridLayout, QLineEdit, QSpinBox, QSlider, QLabel, QPushButton, \
+from PyQt6.QtWidgets import QApplication, QWidget, \
+    QGridLayout, QLineEdit, QSpinBox, QSlider, QLabel, QPushButton, \
     QListWidget
 
 
@@ -65,10 +67,19 @@ class MainWindow(QWidget):
         name = self.name_entry.text()
         value = self.quantity_entry.value()
         kol = self.slider.value()
-        self.goods_lst.addItem(f"Название:{name}, цена: {value}, количество: {kol}")
+        """self.goods_lst.addItem(f"Название:{name}, цена: {value}, количество: {kol}")
         x = value * kol
-        self.sum = self.sum + x
+        self.sum = self.sum + x"""
         self.total.setText(f"ИТОГО: {self.sum}")
+        sql = 'INSERT INTO pokupki(name, price, kolichestvo) VALUES(?,?,?)'
+        self.cur.execute(sql,(name, value, kol))
+        self.conn.commit()
+        sql = 'SELECT name,price,kolichestvo FROM pokupki'
+        self.cur.execute(sql)
+        ans = self.cur.fetchall()
+        self.goods_lst.clear()
+        for item in ans:
+            self.goods_lst.addItem(f"Название:{item[0]}, цена:{item[1]}, кол-во:{item[2]}")
 
 
 
