@@ -1,0 +1,12 @@
+QLineEdit {
+    font-size:36px;
+}
+QSpinBox {
+    font-size:36px;
+}
+QSlider {
+    font-size:36px;
+}
+QLabel {
+    color:#808080
+}
