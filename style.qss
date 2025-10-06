@@ -8,5 +8,12 @@ QSlider {
     font-size:36px;
 }
 QLabel {
+    font-size:36px;
     color:#808080
+}
+QPushButton {
+    font-size:36px;
+}
+QListWidget {
+    font-size:24px;
 }
