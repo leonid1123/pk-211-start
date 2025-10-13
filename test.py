@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, \
 class Gnomiki(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.gnome_id = []
         self.setWindowTitle("Реестр гномиков")
         self.conn = sqlite3.connect("gnomiki.db")
         self.cur = self.conn.cursor()
@@ -34,6 +35,7 @@ class Gnomiki(QWidget):
         self.btn.clicked.connect(self.add_gnome)
         layout.addWidget(self.btn,2,0,1,2)
         self.gnome_lst = QListWidget()
+        self.gnome_lst.itemDoubleClicked.connect(self.delete)
         layout.addWidget(self.gnome_lst,3,0,1,2)
         self.get_all_gnomes()
         self.show()
@@ -47,13 +49,22 @@ class Gnomiki(QWidget):
 
     def get_all_gnomes(self):
         self.gnome_lst.clear()
-        self.cur.execute('select name,height from gnomiki')
+        self.cur.execute('select name,height,id from gnomiki')
         ans = self.cur.fetchall()
-        print(ans)
         if ans:
             for item in ans:
-                self.gnome_lst.addItem(f"{item[0]} - {item[1]}см.")
+                self.gnome_lst.addItem(f"{item[0]} - {item[1]}")
+                self.gnome_id.append(item[2])
 
+    def delete(self,value):
+        row = self.gnome_lst.currentRow()
+        del_id = self.gnome_id[row]
+
+ 
+        self.cur.execute("DELETE FROM gnomiki WHERE id=?;",(del_id,))
+        self.conn.commit()
+        self.gnome_id.pop(row)
+        self.get_all_gnomes()
 
 
 app = QApplication(sys.argv)
