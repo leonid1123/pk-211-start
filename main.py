@@ -6,10 +6,10 @@
 import sys
 from pathlib import Path
 from PyQt6.QtWidgets import QApplication, QWidget, QGridLayout, QListWidget,\
-QPushButton, QLineEdit, QLabel
+QPushButton, QLineEdit, QLabel, QMainWindow
 import pymysql.cursors
 
-class MainWindow(QWidget):
+class MainWindow(QMainWindow):
     """
     Основной класс программы
     """
@@ -19,9 +19,10 @@ class MainWindow(QWidget):
         """
         super().__init__(*args, **kwargs)
         self.setWindowTitle('КОЛБАСА!!!!')
-        self.showMaximized()
+        main_widget = QWidget()
+        self.setCentralWidget(main_widget)
         layout = QGridLayout()
-        self.setLayout(layout)
+        main_widget.setLayout(layout)
 
         self.kolbasa_view = QListWidget()
         self.show_all_btn = QPushButton("Показать")
@@ -62,7 +63,7 @@ class MainWindow(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setStyleSheet(Path('style.qss').read_text())
+    app.setStyleSheet(Path('style.qss').read_text(encoding='utf8'))
     window = MainWindow()
     sys.exit(app.exec())
     
