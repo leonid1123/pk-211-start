@@ -8,6 +8,7 @@ from pathlib import Path
 from PyQt6.QtWidgets import QApplication, QWidget, QGridLayout, QListWidget,\
 QPushButton, QLineEdit, QLabel, QMainWindow
 import pymysql.cursors
+from add_window import AddKolbasaWindow
 
 class MainWindow(QMainWindow):
     """
@@ -29,11 +30,14 @@ class MainWindow(QMainWindow):
         self.show_all_btn.clicked.connect(self.get_all)
         self.clear_all_btn = QPushButton("Очистить список")
         self.clear_all_btn.clicked.connect(self.clear_view)
+        self.add_kolbasa_btn = QPushButton("Добавить колбасу")
+        self.add_kolbasa_btn.clicked.connect(self.add_kolbasa_new_window)
 
         layout.addWidget(QLabel('Список колбасы'),0,0,1,2)
         layout.addWidget(self.kolbasa_view,1,0,1,2)
         layout.addWidget(self.show_all_btn,2,0)
         layout.addWidget(self.clear_all_btn,2,1)
+        layout.addWidget(self.add_kolbasa_btn,3,0,1,2)
         self.show()
         
     def clear_view(self):
@@ -59,6 +63,10 @@ class MainWindow(QMainWindow):
         while ans is not None:
             self.kolbasa_view.addItem(f"{ans[1]} {ans[2]} {ans[3]}")
             ans = self.cur.fetchone()
+
+    def add_kolbasa_new_window(self):
+        self.add_kolbasa = AddKolbasaWindow()
+        self.add_kolbasa.show()
         
 
 if __name__ == '__main__':
