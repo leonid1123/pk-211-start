@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QGridLayout, QListWidget,\
 QPushButton, QLineEdit, QLabel, QMainWindow
 import pymysql.cursors
 from add_window import AddKolbasaWindow
+from db import DbHandler
 
 class MainWindow(QMainWindow):
     """
@@ -19,6 +20,9 @@ class MainWindow(QMainWindow):
         Конструктор класса
         """
         super().__init__(*args, **kwargs)
+        self.conn = None
+        self.cur = None
+        self.add_kolbasa = None
         self.setWindowTitle('КОЛБАСА!!!!')
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
@@ -39,7 +43,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.clear_all_btn,2,1)
         layout.addWidget(self.add_kolbasa_btn,3,0,1,2)
         self.show()
-        
+
     def clear_view(self):
         """
         Метод для очистки списка
@@ -50,28 +54,24 @@ class MainWindow(QMainWindow):
         """
         Метод для получения всех записей из базы данных
         """
-        self.conn = pymysql.connect(
-            host='localhost',
-            user='pk211',
-            password='1234',
-            database='pk211_kolbasa'
-        )
-        self.cur = self.conn.cursor()
-        self.cur.execute('SELECT * FROM kolbasa')
-        ans = self.cur.fetchone()
-        self.kolbasa_view.clear()
-        while ans is not None:
-            self.kolbasa_view.addItem(f"{ans[1]} {ans[2]} {ans[3]}")
-            ans = self.cur.fetchone()
+        #разобраться с обработкой ошибок
+        sql = 'SELECT * FROM kolbasa'
+        ans = DbHandler.make_select_request(sql)
+        if ans != -1:
+            self.kolbasa_view.clear()
+            for item in ans:
+                txt = f"{item[1]} {item[2]} {item[3]}"
+                self.kolbasa_view.addItem(txt)
 
     def add_kolbasa_new_window(self):
+        '''
+        Метод создания окна для редактирования записей в БД
+        '''
         self.add_kolbasa = AddKolbasaWindow()
         self.add_kolbasa.show()
-        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setStyleSheet(Path('style.qss').read_text(encoding='utf8'))
     window = MainWindow()
     sys.exit(app.exec())
-    

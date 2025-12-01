@@ -1,10 +1,43 @@
-import sqlite3
+import pymysql.cursors
+from PyQt6.QtWidgets import QMessageBox
+class DbHandler():
+    '''
+    статический класс для работы с БД
+    '''
+    @staticmethod
+    def make_select_request(_sql):
+        '''
+        статический метод для запросов SELECT к БД
+        '''
+        try:
+            conn = pymysql.connect(
+                host='localhost',
+                user='pk211',
+                password='1234',
+                database='pk211_kolbasa'
+            )
+            cur = conn.cursor()
+            cur.execute(_sql)
+            ans = cur.fetchall()
+            return ans
+        except pymysql.Error:
+            QMessageBox.warning(
+            'Ошибка.',
+            'Проблема с БД'
+            )
+            return -1
 
-conn = sqlite3.connect("pokupki.db")
-cur = conn.cursor()
-cur.execute("CREATE TABLE IF NOT EXISTS pokupki (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, price INTEGER, kolichestvo INTEGER)")
-#cur.execute("insert into pokupki(name, price, kolichestvo) values('яблоки',120, 2)")
-#conn.commit()
-cur.execute("SELECT price,name,kolichestvo FROM pokupki")
-ans = cur.fetchall()
-print(ans)
+    @staticmethod
+    def make_insert_request(_sql, _args):
+        '''
+        статический метод для запросов INSERT к БД
+        '''
+        conn = pymysql.connect(
+            host='localhost',
+            user='pk211',
+            password='1234',
+            database='pk211_kolbasa'
+        )
+        cur = conn.cursor()
+        cur.execute(_sql,_args)
+        conn.commit()
